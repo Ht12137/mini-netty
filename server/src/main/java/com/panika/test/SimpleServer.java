@@ -36,7 +36,7 @@ public class SimpleServer {
         selectionKey.interestOps(SelectionKey.OP_ACCEPT);
         serverChannel.bind(new InetSocketAddress(8080));
 
-        SingleThreadEventExecutor executor = new SingleThreadEventExecutor();
+        NioEventLoop executor = new NioEventLoop();
 
         //主线程负责连接
         while (true){
@@ -64,7 +64,7 @@ public class SimpleServer {
                     clientSocketKey.interestOps(SelectionKey.OP_READ);
                     System.out.println("客户端连接成功"+System.currentTimeMillis());
                     //worker线程开始从客户端读数据，把客户端的channel交给worker
-                    executor.register(clientChannel);
+                    executor.register(clientChannel,executor);
                     //用channel写回一条信息
                     clientChannel.write(ByteBuffer.wrap("服务端写回客户端成功".getBytes()));
                     System.out.println("向客户端发送数据成功"+System.currentTimeMillis());
